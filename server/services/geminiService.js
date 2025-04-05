@@ -1,24 +1,19 @@
-// Mocked Gemini response for dev purposes
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-async function generateRequirements(description) {
-    // Simulate structured output
-    return {
-      summary: `Requirements for: ${description}`,
-      userStories: [
-        "As a user, I want to log in securely.",
-        "As a client, I want to track project status easily."
-      ],
-      functionalRequirements: [
-        "User authentication module",
-        "Project status dashboard"
-      ],
-      nonFunctionalRequirements: [
-        "System should be scalable",
-        "Responses within 300ms"
-      ],
-      techStack: ["Node.js", "Express", "MongoDB", "React"]
-    };
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+export const askGemini = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    res.json({ reply: text });
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    res.status(500).json({ error: "Something went wrong with Gemini" });
   }
-  
-  module.exports = { generateRequirements };
-  
+};

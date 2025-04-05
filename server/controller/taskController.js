@@ -4,11 +4,12 @@ import User from '../models/user_Model.js';
 // Create a new task (accessible by any user)
 export const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description ,deadline} = req.body;
 
     const task = await Task.create({
       title,
       description,
+      deadline,
       createdBy: req.user._id,
     });
 
@@ -84,6 +85,7 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 export const uploadTaskFile = async (req, res) => {
   try {
     const { taskId } = req.params;
@@ -186,3 +188,34 @@ export const deleteTaskFile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+=======
+export const updateTaskStatus = async (req, res) => {
+    try {
+      const { taskId } = req.params;
+      const { status } = req.body;
+  
+      if (!['pending', 'in-progress', 'completed'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status value.' });
+      }
+  
+      const task = await Task.findById(taskId);
+  
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found.' });
+      }
+  
+      // Only the assigned user can update status
+      if (task.assignedTo.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'You are not allowed to update this task.' });
+      }
+  
+      task.status = status;
+      await task.save();
+  
+      res.status(200).json({ message: 'Task status updated.', task });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error.' });
+    }
+  };
+>>>>>>> 92b5f8c084e372250438c44cc22b49363cb4cb05

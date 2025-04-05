@@ -1,12 +1,20 @@
-const mongoose = require('mongoose');
+// models/phaseModel.js
+import mongoose from 'mongoose';
 
 const phaseSchema = new mongoose.Schema({
-  taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
-  phaseName: { type: String, enum: ['Requirement', 'Design', 'Implementation', 'Validation', 'Deployment'] },
+  phaseName: {
+    type: String,
+    enum: ['Requirement', 'Design', 'Implementation', 'Validation', 'Deployment'],
+    required: true
+  },
   notes: String,
   files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }],
-  completed: Boolean,
-  completedAt: Date
-});
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  completedAt: Date,
+  tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }] // All tasks under this phase
+}, { timestamps: true });
 
-module.exports = mongoose.model('Phase', phaseSchema);
+const Phase = mongoose.model('Phase', phaseSchema);
