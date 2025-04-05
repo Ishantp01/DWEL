@@ -1,17 +1,28 @@
-const mongoose = require('mongoose');
+// models/taskModel.js
+import mongoose from 'mongoose';
 
 const taskSchema = new mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   description: String,
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  status: { type: String, enum: ['Todo', 'InProgress', 'Done'], default: 'Todo' },
-  currentPhase: { type: String, enum: ['Requirement', 'Design', 'Implementation', 'Validation', 'Deployment'] },
-  complexity: Number,
-  deadline: Date,
-  phases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Phase' }],
-  readmeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Readme' },
-  createdAt: { type: Date, default: Date.now }
-});
+  status: {
+    type: String,
+    enum: ['pending', 'in-progress', 'completed'],
+    default: 'pending',
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  currentHolder: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+}, { timestamps: true });
 
-module.exports = mongoose.model('Task', taskSchema);
+const Task = mongoose.model('Task', taskSchema);
+export default Task;
