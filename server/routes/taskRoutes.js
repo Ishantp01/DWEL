@@ -5,6 +5,7 @@ import {
   updateCurrentHolder,
   getMyTasks,
   getAllTasks,
+  updateTaskStatus,
 } from '../controller/taskController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { isManager } from '../middlewares/roleMiddleware.js';
@@ -25,5 +26,7 @@ router.get('/my-tasks', protect, getMyTasks);
 
 // Manager gets all tasks
 router.get('/all', protect, isManager, getAllTasks);
+
+router.patch('/:taskId/status', protect, updateTaskStatus);
 
 export default router;

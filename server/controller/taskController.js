@@ -83,3 +83,33 @@ export const getAllTasks = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+export const updateTaskStatus = async (req, res) => {
+    try {
+      const { taskId } = req.params;
+      const { status } = req.body;
+  
+      if (!['pending', 'in-progress', 'completed'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status value.' });
+      }
+  
+      const task = await Task.findById(taskId);
+  
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found.' });
+      }
+  
+      // Only the assigned user can update status
+      if (task.assignedTo.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'You are not allowed to update this task.' });
+      }
+  
+      task.status = status;
+      await task.save();
+  
+      res.status(200).json({ message: 'Task status updated.', task });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error.' });
+    }
+  };
