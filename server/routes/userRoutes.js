@@ -1,6 +1,6 @@
 import express from 'express';
-import { registerUser, loginUser, getProfile } from '../controller/userController.js';
-import { protect } from '../middlewares/authMiddleware.js';
+import { registerUser, loginUser, getProfile, updateUserRole } from '../controller/userController.js';
+import { protect, isAdmin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -12,5 +12,10 @@ router.post('/login', loginUser);
 
 // Get profile
 router.get('/profile', protect, getProfile);
+
+// Update user role (Only managers should access this)
+router.put('/update/:id', protect, isAdmin, updateUserRole);
+
+
 
 export default router;
