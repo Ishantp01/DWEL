@@ -1,7 +1,8 @@
-import { v2 as cloudinary } from 'cloudinary';
-import dotenv from 'dotenv';
+import cloudinaryModule from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import multer from 'multer';
 
-dotenv.config();
+const cloudinary = cloudinaryModule.v2;
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -9,4 +10,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export default cloudinary;
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'taskFiles', // Folder in Cloudinary
+    allowed_formats: ['jpg', 'png', 'pdf', 'docx'],
+    transformation: [{ width: 500, height: 500, crop: 'limit' }],
+  },
+});
+
+const upload = multer({ storage });
+
+export { cloudinary, upload };

@@ -12,22 +12,10 @@ import {
 } from '../controller/taskController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { isManager } from '../middlewares/roleMiddleware.js';
-import multer from 'multer';
-import path from 'path';
+import { upload } from '../config/cloudinaryConfig.js';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadPath = path.join(__dirname, 'uploads/'); // Construct absolute path
-        cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname);
-    }
-});
-
-const upload = multer({ storage: storage });
 
 // Create a task (Any authenticated user)
 router.post('/create', protect, createTask);
@@ -55,5 +43,6 @@ router.put('/:taskId/files/:fileId', protect, upload.single('file'), updateTaskF
 
 // Delete task file (Any authenticated user)
 router.delete('/:taskId/files/:fileId', protect, deleteTaskFile);
+
 
 export default router;
