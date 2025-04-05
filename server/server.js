@@ -7,6 +7,7 @@ import taskRoutes from './routes/taskRoutes.js';
 import chatRoutes from "./routes/chatRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
 import fileRoutes from './routes/fileRoutes.js'; 
+import  askGemini  from './routes/aiRoutes.js'; // Import the askGemini function
 import path from 'path';
 
 
@@ -30,6 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/gemini", geminiRoutes);
+app.use('/api/ask-gemini', askGemini); // Use the askGemini function for this route
 app.use('/api/files', fileRoutes);
 
 
