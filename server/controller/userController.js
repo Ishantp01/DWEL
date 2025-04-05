@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+import User from '../models/user_Model.js';
+import jwt from 'jsonwebtoken';
 
 // Generate JWT
 const generateToken = (id) => {
@@ -7,7 +7,7 @@ const generateToken = (id) => {
 };
 
 // Register User (Only manager should call this)
-exports.registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -39,7 +39,7 @@ exports.registerUser = async (req, res) => {
 };
 
 // Login
-exports.loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -65,7 +65,11 @@ exports.loginUser = async (req, res) => {
 };
 
 // Get profile (Protected route)
-exports.getProfile = async (req, res) => {
-  const user = await User.findById(req.user.id).select('-password');
-  res.status(200).json(user);
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 };

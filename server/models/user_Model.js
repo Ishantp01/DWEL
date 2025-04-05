@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     enum: ['manager', 'employee', 'client'],
     default: 'employee'
   },
-  rating: { type: Number, default: 5 }, // For AI task assignment & tracking
+  rating: { type: Number, default: 5 },
 }, { timestamps: true });
 
 // Password encryption
@@ -26,4 +26,5 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+export default User;
