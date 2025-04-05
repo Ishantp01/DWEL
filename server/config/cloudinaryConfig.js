@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'taskFiles', // Folder in Cloudinary
-    allowed_formats: ['jpg', 'png', 'pdf', 'docx'],
+    allowed_formats: ['jpg', 'png', 'pdf', 'docx','txt'],
     transformation: [{ width: 500, height: 500, crop: 'limit' }],
   },
 });
