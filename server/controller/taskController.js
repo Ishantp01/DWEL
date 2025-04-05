@@ -83,3 +83,106 @@ export const getAllTasks = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+export const uploadTaskFile = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await Task.findById(taskId);
+
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    if (!req.files || req.files.length === 0) return res.status(400).json({ message: 'No files uploaded' });
+
+    const uploadedFiles = req.files.map(file => ({
+      url: file.path,
+      public_id: file.filename,
+    }));
+
+    task.files.push(...uploadedFiles);
+    await task.save();
+
+    res.status(200).json({
+      message: 'Files uploaded successfully',
+      files: task.files,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getTaskFiles = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await Task.findById(taskId);
+
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    res.status(200).json({
+      files: task.files,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const updateTaskFile = async (req, res) => {
+  try {
+    const { taskId, fileId } = req.params;
+    const task = await Task.findById(taskId);
+
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    const fileIndex = task.files.findIndex(file => file.public_id === fileId);
+    if (fileIndex === -1) return res.status(404).json({ message: 'File not found' });
+
+    // Delete old file from cloudinary
+    await cloudinary.uploader.destroy(task.files[fileIndex].public_id);
+
+    // Upload new file
+    const newFile = req.file;
+    if (!newFile) return res.status(400).json({ message: 'No new file uploaded' });
+
+    task.files[fileIndex] = {
+      url: newFile.path,
+      public_id: newFile.filename,
+    };
+
+    await task.save();
+
+    res.status(200).json({
+      message: 'File updated successfully',
+      files: task.files,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const deleteTaskFile = async (req, res) => {
+  try {
+    const { taskId, fileId } = req.params;
+    const task = await Task.findById(taskId);
+
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    const fileIndex = task.files.findIndex(file => file.public_id === fileId);
+    if (fileIndex === -1) return res.status(404).json({ message: 'File not found' });
+
+    // Delete file from Cloudinary
+    await cloudinary.uploader.destroy(task.files[fileIndex].public_id);
+
+    // Remove file from task.files array
+    task.files.splice(fileIndex, 1);
+    await task.save();
+
+    res.status(200).json({
+      message: 'File deleted successfully',
+      files: task.files,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
