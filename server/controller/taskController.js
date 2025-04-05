@@ -4,11 +4,12 @@ import User from '../models/user_Model.js';
 // Create a new task (accessible by any user)
 export const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description ,deadline} = req.body;
 
     const task = await Task.create({
       title,
       description,
+      deadline,
       createdBy: req.user._id,
     });
 

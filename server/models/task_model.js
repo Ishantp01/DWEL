@@ -18,6 +18,11 @@ const taskSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  deadline: Number,
+  currentPhase: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Phase'
+  },  
   currentHolder: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
