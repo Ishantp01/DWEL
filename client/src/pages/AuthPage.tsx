@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Lock, Mail, Eye, EyeOff } from "lucide-react";
@@ -8,22 +7,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
 
+const API_URL = 'http://localhost:5000/api/users';
+
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    document.title = isLogin ? "SynergyOS | Login" : "SynergyOS | Sign Up";
+    document.title = isLogin ? "DWEL | Login" : "DWEL | Sign Up";
   }, [isLogin]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Simple validation
     if (!email || !password || (!isLogin && !name)) {
       toast({
@@ -33,21 +35,53 @@ const AuthPage = () => {
       });
       return;
     }
-    
-    // In a real app, you would authenticate with a backend here
-    // For now, we'll just simulate success
 
-    toast({
-      title: isLogin ? "Login Successful" : "Account Created",
-      description: isLogin 
-        ? "Welcome back to SynergyOS!" 
-        : "Your account has been created successfully",
-    });
-    
-    // Navigate to dashboard after "authentication"
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 1000);
+    setLoading(true);
+
+    try {
+      const response = await fetch(isLogin ? `${API_URL}/login` : `${API_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          ...(isLogin ? {} : { name }),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      toast({
+        title: isLogin ? "Login Successful" : "Account Created",
+        description: isLogin
+          ? "Welcome back to DWEL!"
+          : "Your account has been created successfully",
+      });
+
+      // Optional: save token if returned
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,18 +94,18 @@ const AuthPage = () => {
               Back to Home
             </Link>
           </div>
-          
+
           <div className="mb-8 flex items-center justify-center">
             <div className="h-10 w-10 rounded-full bg-gradient-to-r from-synergy-purple to-synergy-blue" />
-            <span className="ml-2 text-2xl font-semibold text-white">SynergyOS</span>
+            <span className="ml-2 text-2xl font-semibold text-white">DWELL</span>
           </div>
-          
+
           <Card className="bg-card/30 border-border shadow-lg backdrop-blur-sm">
             <CardContent className="pt-6">
               <h1 className="text-2xl font-bold text-center mb-6">
                 {isLogin ? "Sign In to Your Account" : "Create New Account"}
               </h1>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                   <div className="space-y-2">
@@ -91,7 +125,7 @@ const AuthPage = () => {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">
                     Email Address
@@ -108,7 +142,7 @@ const AuthPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <label htmlFor="password" className="text-sm font-medium">
@@ -139,15 +173,16 @@ const AuthPage = () => {
                     </button>
                   </div>
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
+                  disabled={loading}
                   className="w-full bg-gradient-to-r from-synergy-purple to-synergy-blue hover:brightness-110 transition-all"
                 >
-                  {isLogin ? "Sign In" : "Create Account"}
+                  {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
                 </Button>
               </form>
-              
+
               <div className="mt-6 text-center text-sm">
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                 <button
@@ -160,7 +195,7 @@ const AuthPage = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <p className="mt-8 text-center text-xs text-muted-foreground">
             By continuing, you agree to SynergyOS's Terms of Service and Privacy Policy.
           </p>

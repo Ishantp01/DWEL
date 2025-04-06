@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Rocket, Zap, BrainCircuit, GitMerge, ArrowRight, Sparkles } from "lucide-react";
