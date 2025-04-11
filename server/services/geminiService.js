@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+/*import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -48,3 +48,4 @@ export const runGeminiOnAllTxtFiles = async () => {
     return 'Failed to get response from Gemini';
   }
 };
+*/

@@ -1,4 +1,4 @@
-import fs from 'fs';
+/*import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -45,3 +45,4 @@ export const askGeminiFromAllTxt = async (req, res) => {
     res.status(500).json({ error: 'Failed to get answer from Gemini' });
   }
 };
+*/

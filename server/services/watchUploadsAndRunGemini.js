@@ -1,5 +1,5 @@
 // utils/watchUploadsAndRunGemini.js
-import fs from 'fs';
+/*import fs from 'fs';
 import path from 'path';
 import {askGeminiFromAllTxt}  from '../controller/askGeminiFromAllTxt.js';
 
@@ -23,3 +23,4 @@ export const watchUploads = () => {
     }
   });
 };
+*/
