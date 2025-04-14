@@ -25,6 +25,7 @@ app.use(cors({
   }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+import { watchUploads } from './services/watchUploadsAndRunGemini.js';
 
 // Static folder to access uploaded files
 const Upload = path.resolve();
@@ -38,7 +39,7 @@ app.use("/api/gemini", geminiRoutes);
 app.use('/api/ask-gemini', askGemini); // Use the askGemini function for this route
 app.use('/api/files', fileRoutes);
 
-
+watchUploads();
 
 
 const PORT = process.env.PORT || 5000;
