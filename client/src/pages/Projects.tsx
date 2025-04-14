@@ -1,76 +1,108 @@
-
-import { useEffect, useState } from "react";
-import { ChevronDown, ListFilter } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import KanbanBoard from "@/components/projects/KanbanBoard";
+
+type Project = {
+  id: string;
+  name: string;
+  client: string;
+  description: string;
+  progress: number;
+  startDate: string;
+  endDate: string;
+  status: "planning" | "development" | "testing" | "deployment" | "completed";
+};
 
 const Projects = () => {
-  useEffect(() => {
-    document.title = "SynergyOS | Projects";
-  }, []);
+  const navigate = useNavigate();
+  
+  const [projects] = useState<Project[]>([
+    {
+      id: "1",
+      name: "Website Redesign",
+      client: "Acme Corp",
+      description: "Complete redesign of company website",
+      progress: 75,
+      startDate: "2023-06-01",
+      endDate: "2023-09-30",
+      status: "development"
+    },
+    // ... more projects
+  ]);
 
-  const [viewMode, setViewMode] = useState<"kanban" | "gantt">("kanban");
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/sdlc/${projectId}`);
+  };
 
   return (
     <AppLayout>
       <div className="mb-6 flex flex-col space-y-1">
-        <h1 className="text-2xl font-bold">Project Management</h1>
-        <p className="text-muted-foreground">Manage and track your projects</p>
+        <h1 className="text-2xl font-bold">Client Projects</h1>
+        <p className="text-muted-foreground">View and manage all your assigned projects</p>
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <button className="flex h-9 items-center justify-between rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm hover:bg-secondary/30">
-              <span>All Projects</span>
-              <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
-            </button>
-          </div>
-          <button className="flex h-9 items-center rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm hover:bg-secondary/30">
-            <ListFilter className="mr-2 h-4 w-4" />
-            <span>Filter</span>
-          </button>
-        </div>
-
-        <div className="flex items-center">
-          <div className="flex rounded-md border border-input p-1">
-            <button
-              onClick={() => setViewMode("kanban")}
-              className={`rounded px-3 py-1.5 text-sm font-medium ${
-                viewMode === "kanban"
-                  ? "bg-primary text-white"
-                  : "bg-transparent hover:bg-secondary/30"
-              }`}
-            >
-              Kanban
-            </button>
-            <button
-              onClick={() => setViewMode("gantt")}
-              className={`rounded px-3 py-1.5 text-sm font-medium ${
-                viewMode === "gantt"
-                  ? "bg-primary text-white"
-                  : "bg-transparent hover:bg-secondary/30"
-              }`}
-            >
-              Gantt
-            </button>
-          </div>
-          <button className="ml-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">
-            New Project
-          </button>
-        </div>
+      <div className="mb-6 flex justify-end">
+        <button className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">
+          New Project
+        </button>
       </div>
 
-      {viewMode === "kanban" ? (
-        <KanbanBoard />
-      ) : (
-        <div className="glass rounded-xl p-6 text-center">
-          <h3 className="text-lg font-medium">Gantt View</h3>
-          <p className="mt-2 text-muted-foreground">
-            Gantt chart view will be implemented in the next version.
-          </p>
-        </div>
-      )}
+      {/* Projects Grid - now complete */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {projects.map((project) => (
+          <div 
+            key={project.id}
+            onClick={() => handleProjectClick(project.id)}
+            className="group cursor-pointer rounded-lg border bg-white p-6 shadow-sm transition-all hover:shadow-md"
+          >
+            {/* Project card content */}
+            <div className="mb-4 flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 group-hover:text-primary">
+                  {project.name}
+                </h3>
+                <p className="text-sm font-medium text-gray-500">
+                  {project.client}
+                </p>
+              </div>
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                project.status === 'planning' ? 'bg-purple-100 text-purple-800' :
+                project.status === 'development' ? 'bg-blue-100 text-blue-800' :
+                project.status === 'testing' ? 'bg-yellow-100 text-yellow-800' :
+                project.status === 'deployment' ? 'bg-orange-100 text-orange-800' :
+                'bg-green-100 text-green-800'
+              }`}>
+                {project.status}
+              </span>
+            </div>
+
+            <p className="mb-4 line-clamp-2 text-sm text-gray-600">
+              {project.description}
+            </p>
+
+            <div className="text-xs text-gray-500 mb-2">
+              {project.startDate} - {project.endDate}
+            </div>
+
+            <div className="mt-4">
+              <div className="mb-1 flex justify-between text-sm">
+                <span className="font-medium">Completion</span>
+                <span className="font-medium">{project.progress}%</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-gray-200">
+                <div 
+                  className={`h-2 rounded-full ${
+                    project.progress < 30 ? 'bg-red-500' :
+                    project.progress < 70 ? 'bg-yellow-500' :
+                    'bg-green-500'
+                  }`}
+                  style={{ width: `${project.progress}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </AppLayout>
   );
 };
