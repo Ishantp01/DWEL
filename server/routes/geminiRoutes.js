@@ -1,4 +1,4 @@
-/*import express from "express";
+import express from "express";
 import { askGemini } from "../controller/geminiController.js";
 
 const router = express.Router();
@@ -7,4 +7,3 @@ const router = express.Router();
 router.post("/", askGemini);
 
 export default router;
-*/

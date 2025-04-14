@@ -8,7 +8,6 @@ import {
   uploadTaskFile,
   getTaskFiles,
   updateTaskFile,
-  updateTaskStatus,
   deleteTaskFile,
 } from '../controller/taskController.js';
 import { protect } from '../middlewares/authMiddleware.js';
@@ -32,7 +31,6 @@ router.get('/my-tasks', protect, getMyTasks);
 
 // Manager gets all tasks
 router.get('/all', protect, isManager, getAllTasks);
-router.patch('/:taskId/status', protect, updateTaskStatus);
 
 // Upload task files (Any authenticated user)
 router.post('/:taskId/upload', protect, upload.array('files', 5), uploadTaskFile);

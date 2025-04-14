@@ -1,4 +1,4 @@
-/*import { askGemini } from "../services/geminiService.js";
+import { askGemini } from "../services/geminiService.js";
 
 export const chatWithBot = async (req, res) => {
   try {
@@ -14,4 +14,3 @@ export const chatWithBot = async (req, res) => {
     res.status(500).json({ error: "Something went wrong with Gemini" });
   }
 };
-*/

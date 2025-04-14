@@ -1,4 +1,4 @@
-/*import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -24,4 +24,3 @@ export const askGemini = async (req, res) => {
     res.status(500).json({ error: error.message || "Something went wrong with Gemini" });
   }
 };
-*/
